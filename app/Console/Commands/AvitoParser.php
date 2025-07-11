@@ -33,7 +33,7 @@ class AvitoParser extends Command
 
         $parser = new AvitoParserService();
         $totalPages = $parser->getTotalPages($query);
-        $this->info("🔢 Всего страниц: {$totalPages}");
+        $this->info("🔢 Всего страниц: {$totalPages['pages']}");
 
         $delay = now();
         $batch = [];
