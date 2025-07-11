@@ -24,14 +24,14 @@
                     <form method="post" action="{{ route('home.parsing') }}" class="card-body d-sm-flex">
                         @csrf
                         <div class="form-control-feedback form-control-feedback-start flex-grow-1 mb-3 mb-sm-0">
-                            <input type="text" name="q" class="form-control" placeholder="Что ищем?" required @if (!empty($status)) d @endif>
+                            <input type="text" name="q" class="form-control" placeholder="Что ищем?" required @if (!empty($status)) disabled @endif>
                             <div class="form-control-feedback-icon">
                                 <i class="ph-magnifying-glass"></i>
                             </div>
                         </div>
 
                         <div class="ms-sm-3">
-                            <button type="submit" class="btn btn-primary w-100 w-sm-auto" @if (!empty($status)) d @endif>Начать парсинг</button>
+                            <button type="submit" class="btn btn-primary w-100 w-sm-auto" @if (!empty($status)) disabled @endif>Начать парсинг</button>
                         </div>
                     </form>
                 </div>

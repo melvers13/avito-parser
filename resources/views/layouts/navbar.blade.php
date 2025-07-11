@@ -21,6 +21,13 @@
                 </li>
 
                 <li class="nav-item">
+                    <a href="{{ route('result.index') }}" class="navbar-nav-link rounded @if(str_contains($current_route_name, 'result.')) active @endif">
+                        <i class="ph-check-circle me-2"></i>
+                        Результаты
+                    </a>
+                </li>
+
+                <li class="nav-item">
                     <a href="{{ route('proxy.index') }}" class="navbar-nav-link rounded @if(str_contains($current_route_name, 'proxy.')) active @endif">
                         <i class="ph-list me-2"></i>
                         Прокси
