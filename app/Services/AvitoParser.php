@@ -66,7 +66,7 @@ class AvitoParser
 
         $total = (int) preg_replace('/\D+/', '', $countText);
 
-        file_put_contents(storage_path('app/debug.html'), $driver->getPageSource());
+        //file_put_contents(storage_path('app/debug.html'), $driver->getPageSource());
 
         return [
             'total' => $total,
