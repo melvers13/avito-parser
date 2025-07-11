@@ -2,8 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    $parse = app(\App\Services\AvitoParser::class)->getItems('квадроцикл Aodes', 1);
+use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\Web\ProxyController;
 
-    dd($parse);
-});
+/**
+ * Главная.
+ */
+Route::get('/', [HomeController::class, 'index'])->name('home.index');
+Route::post('/parsing', [HomeController::class, 'parsing'])->name('home.parsing');
+Route::get('/parsing/status', [HomeController::class, 'status'])->name('home.status');
+
+/**
+ * Прокси.
+ */
+Route::get('/proxies', [ProxyController::class, 'index'])->name('proxy.index');
+Route::post('/proxies/create', [ProxyController::class, 'create'])->name('proxy.create');

@@ -37,5 +37,6 @@ class ParseAvitoJob implements ShouldQueue
                 'page' => $this->page,
             ]);
         }
+
     }
 }

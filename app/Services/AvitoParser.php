@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use AllowDynamicProperties;
 use Facebook\WebDriver\Exception\NoSuchElementException;
 use Facebook\WebDriver\Exception\TimeoutException;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
@@ -10,70 +11,50 @@ use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\Chrome\ChromeDriverService;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
+use GuzzleHttp\Client;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\Panther\Client;
 
 class AvitoParser
 {
-    const AVITO_ENDPOINT = "https://www.avito.ru/all/transport?q=";
+    const AVITO_ENDPOINT = "https://avito.ru/all/transport?q=";
 
-    /**
-     * Создание Selenium драйвера.
-     *
-     * @return RemoteWebDriver
-     */
-    private function createDriver(): RemoteWebDriver
+    public function getTotalPages(string $query, array $proxy = null): array
     {
-        $host = config('services.selenium.host');
-
-        $options = new ChromeOptions();
-        $options->addArguments([
-            '--headless',
-            '--disable-gpu',
-            '--no-sandbox',
-            '--disable-dev-shm-usage',
-            '--window-size=1280,720',
-            '--user-agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.7204.100 Safari/537.36"'
+        $client = new \GuzzleHttp\Client([
+            'proxy' => "http://{$proxy['login']}:{$proxy['password']}@{$proxy['ip']}:{$proxy['port']}",
+            'headers' => [
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.7204.100 Safari/537.36',
+            ],
+            'timeout' => 60,
+            'connect_timeout' => 15,
+            'verify' => false,
         ]);
 
-        $options->setExperimentalOption('prefs', [
-            'profile.managed_default_content_settings.images' => 2,
-            'profile.managed_default_content_settings.stylesheets' => 2,
-            'profile.managed_default_content_settings.fonts' => 2,
-        ]);
-
-        $capabilities = DesiredCapabilities::chrome();
-        $capabilities->setCapability(ChromeOptions::CAPABILITY, $options);
-
-        return RemoteWebDriver::create($host, $capabilities);
-    }
-
-    /**
-     * Получение количества страниц по запросу.
-     *
-     * @param string $query
-     * @return array
-     */
-    public function getTotalPages(string $query): array
-    {
         $url = self::AVITO_ENDPOINT . urlencode($query);
-        $driver = $this->createDriver();
-        $driver->get($url);
 
-        $driver->manage()->timeouts()->implicitlyWait(5);
-        file_put_contents(storage_path('app/debug.html'), $driver->getPageSource());
+        $response = $client->get($url);
+        $html = (string) $response->getBody();
 
-        $countText = $driver->findElement(WebDriverBy::cssSelector('[data-marker="page-title/count"]'))->getText();
-        $driver->quit();
+        file_put_contents(storage_path('app/avito_debug_total.html'), $html);
+
+        $crawler = new \Symfony\Component\DomCrawler\Crawler($html);
+
+        $countText = $crawler->filter('[data-marker="page-title/count"]')->count()
+            ? $crawler->filter('[data-marker="page-title/count"]')->text()
+            : null;
+
+        if (!$countText) {
+            throw new \Exception('Не удалось найти элемент с количеством объявлений');
+        }
 
         $total = (int) preg_replace('/\D+/', '', $countText);
 
-
         return [
             'total' => $total,
-            'pages' => ceil($total / 50)
+            'pages' => (int) ceil($total / 50),
         ];
     }
+
 
     /**
      * Получение объявлений с указанной страницы.
