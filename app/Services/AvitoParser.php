@@ -61,7 +61,7 @@ class AvitoParser
         $driver->get($url);
 
         $driver->manage()->timeouts()->implicitlyWait(5);
-        //file_put_contents(storage_path('app/debug.html'), $driver->getPageSource());
+        file_put_contents(storage_path('app/debug.html'), $driver->getPageSource());
 
         $countText = $driver->findElement(WebDriverBy::cssSelector('[data-marker="page-title/count"]'))->getText();
         $driver->quit();
