@@ -11,6 +11,9 @@
 /.phpunit.cache
 /.vscode
 /.zed
+google-chrome-stable_current_amd64.deb
+chromedriver-linux64.zip
+selenium-server-4.34.0.jar
 /auth.json
 /node_modules
 /public/build
