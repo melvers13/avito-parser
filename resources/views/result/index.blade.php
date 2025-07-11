@@ -71,7 +71,9 @@
 
             // Setting datatable defaults
             $.extend( $.fn.dataTable.defaults, {
-                autoWidth: false,
+                scrollX: true,
+                responsive: true,
+                autoWidth: true,
                 displayLength: 50,
                 order: [[ 0, 'desc' ]],
                 dom: '<"datatable-header justify-content-start"f<"ms-sm-auto"l><"ms-sm-3"B>><"datatable-scroll-wrap"t><"datatable-footer"ip>',
