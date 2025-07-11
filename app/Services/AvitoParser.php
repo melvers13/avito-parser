@@ -33,7 +33,7 @@ class AvitoParser
             '--no-sandbox',
             '--disable-dev-shm-usage',
             '--window-size=1280,720',
-            '--user-agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.7204.100 Safari/537.36"'
+            //'--user-agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.7204.100 Safari/537.36"'
         ]);
 
         $options->setExperimentalOption('prefs', [

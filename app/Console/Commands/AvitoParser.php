@@ -46,7 +46,7 @@ class AvitoParser extends Command
 
         $delay = now();
 
-        for ($page = 1; $page <= $totalPages['pages']; $page++) {
+        for ($page = 1; $page <= $totalPages; $page++) {
             $delay = $delay->addSeconds(rand(3, 10));
             dispatch((new ParseAvitoJob($query, $page))->delay($delay));
         }
