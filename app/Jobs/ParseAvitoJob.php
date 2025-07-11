@@ -16,11 +16,10 @@ class ParseAvitoJob implements ShouldQueue
     protected string $query;
     protected int $page;
 
-    public function __construct(string $query, int $page, $delay)
+    public function __construct(string $query, int $page)
     {
         $this->query = $query;
         $this->page = $page;
-        $this->delay($delay);
     }
 
     public function handle()

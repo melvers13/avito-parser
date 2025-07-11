@@ -35,16 +35,20 @@ class AvitoParser extends Command
         $totalPages = $parser->getTotalPages($query);
         $this->info("🔢 Всего страниц: {$totalPages['pages']}");
 
+        dispatch((new ParseAvitoJob('квадроцикл Aodes', 1))->delay(now()->addSeconds(1)));
+
+     /*
         $delay = now();
         $batch = [];
 
         for ($page = 1; $page <= $totalPages; $page++) {
             $delay = $delay->addSeconds(rand(3, 10));
-            $batch[] = new ParseAvitoJob($query, $page, $delay);
+            $batch[] = (new ParseAvitoJob($query, $page))->delay($delay);
         }
 
         Bus::batch($batch)->dispatch();
 
         $this->info("✅ Все страницы поставлены в очередь.");
+     */
     }
 }
