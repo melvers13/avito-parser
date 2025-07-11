@@ -10,6 +10,16 @@
     <script src="{{ asset('assets/demo/pages/datatables_extension_fixed_columns.js') }}"></script>
     <script src="{{ asset('assets/demo/pages/datatables_api.js') }}"></script>
     <script src="{{ asset('assets/js/vendor/tables/datatables/extensions/buttons.min.js') }}"></script>
+
+    <style>
+        .text-truncate {
+            display: inline-block;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -41,7 +51,13 @@
                                     <td>{{ $product->name }}</td>
                                     <td>{{ $product->price }}</td>
                                     <td>{{ $product->author }}</td>
-                                    <td><a href="{{ $product->url }}" target="_blank">{{ $product->url }}</a></td>
+                                    {{-- Скрытый URL для экспорта --}}
+                                    <td class="d-none export-url">{{ $product->url }}</td>
+
+                                    {{-- Видимый столбец --}}
+                                    <td>
+                                        <a href="{{ $product->url }}" target="_blank">Открыть</a>
+                                    </td>
                                 </tr>
                             @endforeach
                             </tbody>
@@ -71,9 +87,9 @@
 
             // Setting datatable defaults
             $.extend( $.fn.dataTable.defaults, {
-                scrollX: true,
+                scrollX: false,
                 responsive: false,
-                autoWidth: true,
+                autoWidth: false,
                 displayLength: 50,
                 order: [[ 0, 'desc' ]],
                 dom: '<"datatable-header justify-content-start"f<"ms-sm-auto"l><"ms-sm-3"B>><"datatable-scroll-wrap"t><"datatable-footer"ip>',
@@ -101,9 +117,22 @@
                     ]
                 },
                 columnDefs: [
-                    { width: '5%', targets: 0 },
-                    { width: '25%', targets: 0 }
+                    {
+                        targets: 4, // Столбец с ссылкой (видимый)
+                        render: function (data, type, row, meta) {
+                            if (type === 'export') {
+                                // Используем скрытую ячейку
+                                const tableRow = document.querySelectorAll('table.dataTable tbody tr')[meta.row];
+                                const hiddenCell = tableRow.querySelector('.export-url');
+                                return hiddenCell ? hiddenCell.textContent : '';
+                            }
+
+                            return data;
+                        }
+                    }
                 ]
+
+
             });
 
             // Basic datatable
