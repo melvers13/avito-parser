@@ -3,9 +3,11 @@
 namespace App\Console\Commands;
 
 use App\Jobs\ParseAvitoJob;
+use App\Models\Product;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Bus;
 use App\Services\AvitoParser as AvitoParserService;
+use Illuminate\Support\Facades\DB;
 
 class AvitoParser extends Command
 {
@@ -28,6 +30,11 @@ class AvitoParser extends Command
      */
     public function handle()
     {
+        /**
+         * Очистка продукции.
+         */
+        DB::table('products')->delete(); // если хочешь без модели
+
         $query = $this->argument('query');
         $this->info("🔍 Запрос: {$query}");
 
@@ -35,9 +42,8 @@ class AvitoParser extends Command
         $totalPages = $parser->getTotalPages($query);
         $this->info("🔢 Всего страниц: {$totalPages['pages']}");
 
-        dispatch((new ParseAvitoJob('квадроцикл Aodes', 1))->delay(now()->addSeconds(1)));
+        //dispatch((new ParseAvitoJob('квадроцикл Aodes', 1))->delay(now()->addSeconds(1)));
 
-     /*
         $delay = now();
         $batch = [];
 
@@ -49,6 +55,5 @@ class AvitoParser extends Command
         Bus::batch($batch)->dispatch();
 
         $this->info("✅ Все страницы поставлены в очередь.");
-     */
     }
 }
