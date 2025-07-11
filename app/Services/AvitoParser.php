@@ -70,58 +70,9 @@ class AvitoParser
      * @throws NoSuchElementException
      * @throws TimeoutException
      */
-    public function getItems(string $query, int $page = 1): array
+    public function getItems(string $query, int $page = 1)
     {
-        $url = self::AVITO_ENDPOINT . urlencode($query) . "&p=$page";
-        $driver = $this->createDriver();
-        $driver->get($url);
 
-        $driver->wait(10)->until(
-            WebDriverExpectedCondition::presenceOfElementLocated(
-                WebDriverBy::cssSelector('[data-marker="item"]')
-            )
-        );
-
-        $items = [];
-        $elements = $driver->findElements(WebDriverBy::cssSelector('[data-marker="item"]'));
-
-        foreach ($elements as $element) {
-            $title = null;
-            $link = null;
-            $price = null;
-            $seller = null;
-
-            $titleNodes = $element->findElements(WebDriverBy::cssSelector('[itemprop="name"]'));
-            if ($titleNodes) {
-                $title = $titleNodes[0]->getText();
-            }
-
-            $linkNodes = $element->findElements(WebDriverBy::cssSelector('a[itemprop="url"]'));
-            if ($linkNodes) {
-                $href = $linkNodes[0]->getAttribute('href');
-                if ($href && !str_starts_with($href, 'http')) {
-                    $href = 'https://www.avito.ru' . $href;
-                }
-                $link = $href;
-            }
-
-            $priceNodes = $element->findElements(WebDriverBy::cssSelector('[data-marker="item-price"]'));
-            if ($priceNodes) {
-                $price = $priceNodes[0]->getText();
-            }
-
-            $sellerNodes = $element->findElements(WebDriverBy::cssSelector('a[href*="/brands/"] > p'));
-            if ($sellerNodes) {
-                $seller = trim($sellerNodes[0]->getText());
-            }
-
-            if ($title && $link) {
-                $items[] = compact('title', 'link', 'price', 'seller');
-            }
-        }
-
-        $driver->quit();
-        return $items;
     }
 
 }
