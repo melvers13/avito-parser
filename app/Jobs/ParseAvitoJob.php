@@ -15,28 +15,49 @@ class ParseAvitoJob implements ShouldQueue
 
     protected string $query;
     protected int $page;
+    protected array $proxies;
 
-    public function __construct(string $query, int $page)
+    public function __construct(string $query, int $page, array $proxies)
     {
         $this->query = $query;
         $this->page = $page;
+        $this->proxies = $proxies;
     }
 
-    public function handle()
+    public function handle(): void
     {
         $parser = new AvitoParser();
-        $items = $parser->getItems($this->query . '&p=' . $this->page);
-        logger()->info("✅ Страница {$this->page} загружена, найдено: " . count($items));
+        $url = $this->query . '&p=' . $this->page;
 
-        foreach ($items as $item) {
-            Product::create([
-                'name' => $item['title'],
-                'author' => $item['seller'],
-                'price' => $item['price'],
-                'url' => $item['link'],
-                'page' => $this->page,
-            ]);
+        foreach ($this->proxies as $index => $proxy) {
+            try {
+                push_event("🔄 Стр. {$this->page}: Пробуем прокси {$proxy['ip']}:{$proxy['port']}");
+
+                $items = $parser->getItems($this->query, $this->page, [
+                    'ip' => $proxy['ip'],
+                    'port' => $proxy['port'],
+                    'login' => $proxy['login'],
+                    'password' => $proxy['password'],
+                ]);
+
+                push_event("✅ Страница {$this->page} загружена через {$proxy['ip']}, найдено: " . count($items));
+
+                foreach ($items as $item) {
+                    Product::create([
+                        'name' => $item['title'],
+                        'author' => $item['seller'],
+                        'price' => $item['price'],
+                        'url' => $item['link'],
+                        'page' => $this->page,
+                    ]);
+                }
+
+                return; // Успешно, выходим
+            } catch (\Throwable $e) {
+                push_event("⚠️ Прокси {$proxy['ip']} не сработал на стр. {$this->page}: " . $e->getMessage());
+            }
         }
 
+        push_event("⛔ Страница {$this->page} не обработана — ни один прокси не сработал.");
     }
 }

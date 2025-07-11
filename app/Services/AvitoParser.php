@@ -32,7 +32,7 @@ class AvitoParser
             'headers' => [
                 'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.7204.100 Safari/537.36',
             ],
-            'timeout' => 15,
+            'timeout' => 20,
             'connect_timeout' => 15,
             'verify' => false,
         ]);
@@ -60,19 +60,60 @@ class AvitoParser
         ];
     }
 
-
     /**
      * Получение объявлений с указанной страницы.
      *
      * @param string $query
      * @param int $page
      * @return array
-     * @throws NoSuchElementException
-     * @throws TimeoutException
      */
-    public function getItems(string $query, int $page = 1)
+    public function getItems(string $query, int $page = 1, array $proxy = null): array
     {
+        $client = new \GuzzleHttp\Client([
+            'proxy' => "http://{$proxy['login']}:{$proxy['password']}@{$proxy['ip']}:{$proxy['port']}",
+            'headers' => [
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.7204.100 Safari/537.36',
+            ],
+            'timeout' => 20,
+            'connect_timeout' => 15,
+            'verify' => false,
+        ]);
 
+        $url = self::AVITO_ENDPOINT . urlencode($query) . "&p=$page";
+
+        $response = $client->get($url);
+        $html = (string) $response->getBody();
+
+        $crawler = new Crawler($html);
+        $items = [];
+
+        $crawler->filter('[data-marker="item"]')->each(function (Crawler $node) use (&$items) {
+            $title = $node->filter('[itemprop="name"]')->count()
+                ? $node->filter('[itemprop="name"]')->text()
+                : null;
+
+            $link = $node->filter('a[itemprop="url"]')->count()
+                ? $node->filter('a[itemprop="url"]')->attr('href')
+                : null;
+
+            $price = $node->filter('[data-marker="item-price"]')->count()
+                ? $node->filter('[data-marker="item-price"]')->text()
+                : null;
+
+            $seller = $node->filter('a[href*="/brands/"] > p')->count()
+                ? trim($node->filter('a[href*="/brands/"] > p')->text())
+                : null;
+
+            if ($title && $link) {
+                if (!str_starts_with($link, 'http')) {
+                    $link = 'https://www.avito.ru' . $link;
+                }
+
+                $items[] = compact('title', 'link', 'price', 'seller');
+            }
+        });
+
+        return $items;
     }
 
 }
