@@ -18,6 +18,13 @@ class AvitoParser
 {
     const AVITO_ENDPOINT = "https://avito.ru/all/transport?q=";
 
+    /**
+     * Получает кол-во объявлений к парсингу.
+     *
+     * @param string $query
+     * @param array|null $proxy
+     * @return int[]
+     */
     public function getTotalPages(string $query, array $proxy = null): array
     {
         $client = new \GuzzleHttp\Client([
@@ -34,8 +41,6 @@ class AvitoParser
 
         $response = $client->get($url);
         $html = (string) $response->getBody();
-
-        file_put_contents(storage_path('app/avito_debug_total.html'), $html);
 
         $crawler = new \Symfony\Component\DomCrawler\Crawler($html);
 

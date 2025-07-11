@@ -59,7 +59,7 @@
 // Проверка статуса парсинга.
 //
 setInterval(() => {
-    fetch('{{ route('home.status') }}')
+    fetch('{{ route('home.status', [], true) }}')
         .then(response => response.text())
         .then(html => {
             document.getElementById('parser-status').innerHTML = html;

@@ -18,8 +18,8 @@
 
                 <div class="alert alert-warning alert-dismissible fade show">
                     <i class="ph-warning-circle me-2"></i>
-                    <span class="fw-semibold">Внимание!</span> Avito защищен от парсинга и нужно использовать мобильные прокси, которые каждые 2 минуты <span class="fw-semibold">автоматически</span> меняют IP адреса.<br/>
-                    Обычные прокси - работать <span class="fw-semibold">не будут</span>. Рекомендуется покупать их здесь - <a href="https://mobileproxy.space/" target="_blank">mobileproxy.space</a> или <a href="https://proxys.io/ru/buy-mobile-proxies?type=personal" target="_blank">proxys.io</a>
+                    <span class="fw-semibold">Внимание!</span> Avito защищен от парсинга и необходимы мобильные прокси с таймером на смену IP адреса каждые 2 минуты.<br/>
+                    Обычные прокси - <span class="fw-semibold">работать не будут</span>. Рекомендуется покупать прокси здесь - <a href="https://mobileproxy.space/" target="_blank">mobileproxy.space</a> или <a href="https://proxys.io/ru/buy-mobile-proxies?type=personal" target="_blank">proxys.io</a>
                 </div>
 
                 <div class="card">
