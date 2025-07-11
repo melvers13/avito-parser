@@ -72,7 +72,7 @@
             // Setting datatable defaults
             $.extend( $.fn.dataTable.defaults, {
                 scrollX: true,
-                responsive: true,
+                responsive: false,
                 autoWidth: true,
                 displayLength: 50,
                 order: [[ 0, 'desc' ]],
