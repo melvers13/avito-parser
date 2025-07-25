@@ -82,26 +82,19 @@ class StartParserJob implements ShouldQueue
         push_event("⏱️ Расчёт времени парсинга: {$hours} ч {$minutes} мин (страниц: {$total['pages']}, прокси: {$proxies_count}, интервал: {$delay_seconds} сек).");
 
         $delay = now();
-
         $page = 1;
         $total_pages = $total['pages'];
-        //$total_pages = 2;
 
         while ($page <= $total_pages) {
-            foreach ($proxies as $proxy) {
-                if ($page > $total_pages) {
-                    break; // всё
-                }
+            dispatch((new ParseAvitoJob($this->query, $page, $proxies->toArray()))
+                ->delay($delay));
 
-                dispatch((new ParseAvitoJob($this->query, $page, $proxies->toArray()))
-                    ->delay($delay));
+            push_event("📦 Задача для страницы {$page} поставлена на {$delay->format('H:i:s')}");
 
-                $page++;
-            }
-
-            // Ждём 2.5 минуты между "волнами"
-            $delay = $delay->addSeconds($delay_seconds);
+            $page++;
+            $delay = $delay->addSeconds($delay_seconds); // ⬅️ каждая следующая страница через 2.5 мин
         }
+
 
     }
 }
