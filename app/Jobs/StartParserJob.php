@@ -89,20 +89,19 @@ class StartParserJob implements ShouldQueue
 
         while ($page <= $total_pages) {
             foreach ($proxies as $proxy) {
+                if ($page > $total_pages) {
+                    break; // всё
+                }
+
                 dispatch((new ParseAvitoJob($this->query, $page, $proxies->toArray()))
                     ->delay($delay));
 
                 $page++;
-
-                // Если страниц больше нет — прерываем внешний цикл
-                if ($page > $total_pages) {
-                    break 2; // выходим из foreach + while сразу
-                }
             }
 
+            // Ждём 2.5 минуты между "волнами"
             $delay = $delay->addSeconds($delay_seconds);
         }
-
 
     }
 }
