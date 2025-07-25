@@ -84,8 +84,8 @@ class StartParserJob implements ShouldQueue
         $delay = now();
 
         $page = 1;
-        //$total_pages = $total['pages']; // можно ограничить кол-во загружаемых страниц.
-        $total_pages = 2;
+        $total_pages = $total['pages'];
+        //$total_pages = 2;
 
         while ($page <= $total_pages) {
             foreach ($proxies as $proxy) {

@@ -120,7 +120,7 @@
                 },
                 columnDefs: [
                     {
-                        targets: 4, // Столбец с ссылкой (видимый)
+                        targets: 5, // Столбец с ссылкой (видимый)
                         render: function (data, type, row, meta) {
                             if (type === 'export') {
                                 // Используем скрытую ячейку
