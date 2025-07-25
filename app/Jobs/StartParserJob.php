@@ -29,7 +29,7 @@ class StartParserJob implements ShouldQueue
         /**
          * Очистка продукции.
          */
-        DB::table('products')->delete();
+       // DB::table('products')->delete();
 
         push_event("🎯 Начата работа парсера Avito по запросу: {$this->query}.");
 
