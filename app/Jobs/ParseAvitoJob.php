@@ -56,8 +56,9 @@ class ParseAvitoJob implements ShouldQueue
                 return; // Успешно, выходим
             } catch (\Throwable $e) {
                 push_event("⚠️ Прокси {$proxy['ip']} не сработал на стр. {$this->page}");
-                push_event("⛔ Страница {$this->page} была пропущена.");
             }
         }
+
+        push_event("⛔ Страница {$this->page} была пропущена.");
     }
 }
