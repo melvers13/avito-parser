@@ -49,6 +49,7 @@ class ParseAvitoJob implements ShouldQueue
                         'price' => $item['price'],
                         'url' => $item['link'],
                         'page' => $this->page,
+                        'location' => $item['location'],
                     ]);
                 }
 

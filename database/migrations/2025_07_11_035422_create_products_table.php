@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('price')->nullable();
             $table->text('url')->nullable();
             $table->integer('page');
+            $table->string('location')->nullable();
             $table->timestamps();
         });
     }

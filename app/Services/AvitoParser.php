@@ -104,12 +104,16 @@ class AvitoParser
                 ? trim($node->filter('a[href*="/brands/"] > p')->text())
                 : null;
 
+            $location = $node->filter('[class*="geo-root"]')->count()
+                ? trim($node->filter('[class*="geo-root"]')->text())
+                : null;
+
             if ($title && $link) {
                 if (!str_starts_with($link, 'http')) {
                     $link = 'https://www.avito.ru' . $link;
                 }
 
-                $items[] = compact('title', 'link', 'price', 'seller');
+                $items[] = compact('title', 'link', 'price', 'seller', 'location');
             }
         });
 

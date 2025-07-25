@@ -44,6 +44,7 @@
                             <th>Стоимость</th>
                             <th>Автор</th>
                             <th>Ссылка</th>
+                            <th>Локация</th>
                             </thead>
                             <tbody>
                             @foreach ($products as $product)
@@ -58,6 +59,7 @@
                                     <td>
                                         <a href="{{ $product->url }}" target="_blank">Открыть</a>
                                     </td>
+                                    <td>{{ $product->location }}</td>
                                 </tr>
                             @endforeach
                             </tbody>

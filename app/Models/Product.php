@@ -11,6 +11,7 @@ class Product extends Model
         'author',
         'price',
         'url',
-        'page'
+        'page',
+        'location'
     ];
 }
