@@ -17,6 +17,10 @@ class ResultController extends Controller
     {
         $products = app(\App\Base\Product\Actions\Get::class)->getAll();
 
+        $products = $products->unique(function ($product) {
+            return $product->name . '|' . $product->author . '|' . $product->price . '|' . $product->location;
+        })->values();
+        
         return view('result.index', compact('products'));
     }
 }
