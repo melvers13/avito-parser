@@ -72,6 +72,8 @@ class StartParserJob implements ShouldQueue
         /**
          * Расчёт времени парсинга.
          */
+        // todo
+        /*
         $delay_seconds = 150; // 2.5 минуты между запросами для каждого прокси
         $cycles = ceil($total['pages'] / $proxies_count);
         $total_seconds = $cycles * $delay_seconds;
@@ -93,6 +95,36 @@ class StartParserJob implements ShouldQueue
 
             $page++;
             $delay = $delay->addSeconds($delay_seconds); // ⬅️ каждая следующая страница через 2.5 мин
+        }
+        */
+        $delay_seconds = 150; // 2.5 минуты между запросами для каждого прокси
+        $skipped_pages = [
+            1, 2, 3, 4, 5, 6, 17, 32, 33, 34, 35, 36, 46, 47, 57, 61, 62, 63,
+            65, 66, 70, 71, 72, 79, 80, 81, 85, 86, 87, 89, 90, 91, 92, 93, 94,
+            95, 96, 97, 98, 99, 100, 101, 102, 106, 107, 108, 113, 114, 115, 123,
+            125, 126, 128, 129, 130, 131, 132, 133, 134, 135, 137, 138, 146, 147,
+            149, 150, 152, 153, 154, 155, 156, 157, 158, 159, 173, 174, 175, 176,
+            177, 184, 185, 186, 188, 189, 192
+        ];
+
+        $total_pages = count($skipped_pages);
+        $cycles = ceil($total_pages / $proxies_count);
+        $total_seconds = $cycles * $delay_seconds;
+
+        $hours = floor($total_seconds / 3600);
+        $minutes = floor(($total_seconds % 3600) / 60);
+
+        push_event("⏱️ Расчёт времени парсинга: {$hours} ч {$minutes} мин (страниц: {$total_pages}, прокси: {$proxies_count}, интервал: {$delay_seconds} сек).");
+
+        $delay = now();
+
+        foreach ($skipped_pages as $page) {
+            dispatch((new ParseAvitoJob($this->query, $page, $proxies->toArray()))
+                ->delay($delay));
+
+            push_event("📦 Задача для страницы {$page} поставлена на {$delay->format('H:i:s')}");
+
+            $delay = $delay->addSeconds($delay_seconds);
         }
 
 

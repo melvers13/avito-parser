@@ -20,7 +20,7 @@ class ResultController extends Controller
         $products = $products->unique(function ($product) {
             return $product->name . '|' . $product->author . '|' . $product->price . '|' . $product->location;
         })->values();
-        
+
         return view('result.index', compact('products'));
     }
 }
